@@ -1,0 +1,51 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Local IDE settings
+.settings/
+.metadata/
+.classpath
+.project
+
+# OSX
+.DS_STORE
+
+# Windows
+Thumbs.db
+deezer-android-sdk-0.9.2-v01857.zip
+
+deezer-android-sdk-0.9.2-v01857/deezer-sdk-0.9.2.jar
+
+deezer-android-sdk-0.9.2-v01857/deezer-sdk-docs-0.9.2.zip
+
+deezer-android-sdk-0.9.2-v01857/deezer-sdk-sample-0.9.2.zip
+
+deezer-android-sdk-0.9.2-v01857/libdeezer.so
+
+deezer-android-sdk-0.9.2-v01857/release-note-0.9.2.txt
+
+google-gson-2.2.2-release.zip
+
+google-gson-2.2.2/gson-2.2.2-javadoc.jar
+
+google-gson-2.2.2/gson-2.2.2-sources.jar
+
+google-gson-2.2.2/gson-2.2.2.jar
+
+google-gson-2.2.2/README
+
+google-gson-2.2.2/LICENSE
