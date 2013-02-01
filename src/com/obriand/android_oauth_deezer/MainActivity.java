@@ -9,12 +9,17 @@ import com.deezer.sdk.OAuthException;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-    /** Your app Deezer appId. */
-    public final static String APP_ID = "";
+    public final static String TAG = "com.obriand.android_oauth_deezer.MainActivity";
+	
+	/** Your app Deezer appId. */
+    public final static String APP_ID = "100113"; // ID of the o.briand@gmail.com account for application "test_orange"
     /** Permissions requested on Deezer accounts. */
     private final static String[] PERMISSIONS = new String[] {};
     /** DeezerConnect object used for auhtentification or request. */
@@ -24,10 +29,12 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		init();
 	}
 	
-	public void init() {
+	public void btLogin(View view) {
+		Log.i(TAG, "login");
+		Toast.makeText(this, "try to login", Toast.LENGTH_LONG).show();
+		deezerConnect.authorize( MainActivity.this, PERMISSIONS, new LoginDialogHandler() );
 	}
 
 	@Override
@@ -38,26 +45,31 @@ public class MainActivity extends Activity {
 	}
 	
     /** Handle DeezerConnect callbacks. */
-    private class MyDialogHandler implements DialogListener {
+    private class LoginDialogHandler implements DialogListener {
 	    @Override
 	    public void onComplete(final Bundle values) {
-	     
+			Log.i(TAG, "onComplete");
+			Toast.makeText(MainActivity.this, "onComplete", Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onDeezerError(final DeezerError deezerError) {
-	     
+			Log.i(TAG, "onDeezerError");
+			Toast.makeText(MainActivity.this, "onDeezerError", Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onError(final DialogError dialogError) {
-	     
+			Log.i(TAG, "onError");
+			Toast.makeText(MainActivity.this, "onError", Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onCancel() {
-	     
+			Log.i(TAG, "onCancel");
+			Toast.makeText(MainActivity.this, "onCancel", Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onOAuthException(OAuthException oAuthException) {
-	     
+			Log.i(TAG, "onOAuthException");
+			Toast.makeText(MainActivity.this, "onOAuthException", Toast.LENGTH_LONG).show();
 	    }//met
     }//inner class
 

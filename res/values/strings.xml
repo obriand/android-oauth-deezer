@@ -4,5 +4,6 @@
     <string name="app_name">android-oauth-deezer</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="mainactivity_login_bt">Login to Deezer</string>
 
 </resources>
