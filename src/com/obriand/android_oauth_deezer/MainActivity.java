@@ -6,6 +6,7 @@ import com.deezer.sdk.DeezerError;
 import com.deezer.sdk.DialogError;
 import com.deezer.sdk.DialogListener;
 import com.deezer.sdk.OAuthException;
+import com.deezer.sdk.SessionStore;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -34,6 +35,8 @@ public class MainActivity extends Activity {
 	public void btLogin(View view) {
 		Log.i(TAG, "login");
 		Toast.makeText(this, "try to login", Toast.LENGTH_LONG).show();
+		// Call the authorize method of deezerConnect SDK object to launch login process :
+		// Use LoginDialogHandler inner class to handle callbacks methods (success, error, cancel...)
 		deezerConnect.authorize( MainActivity.this, PERMISSIONS, new LoginDialogHandler() );
 	}
 
@@ -49,17 +52,20 @@ public class MainActivity extends Activity {
 	    @Override
 	    public void onComplete(final Bundle values) {
 			Log.i(TAG, "onComplete");
-			Toast.makeText(MainActivity.this, "onComplete", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainActivity.this, "onComplete:[token:"+deezerConnect.getAccessToken()+"-appId:"+deezerConnect.getAppId()+"]", Toast.LENGTH_LONG).show();
+			// Store the session because the authentication is successful
+			SessionStore sessionStore = new SessionStore();
+			sessionStore.save( deezerConnect, MainActivity.this );
 	    }//met
 	    @Override
 	    public void onDeezerError(final DeezerError deezerError) {
 			Log.i(TAG, "onDeezerError");
-			Toast.makeText(MainActivity.this, "onDeezerError", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainActivity.this, "onDeezerError:"+deezerError.getMessage(), Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onError(final DialogError dialogError) {
 			Log.i(TAG, "onError");
-			Toast.makeText(MainActivity.this, "onError", Toast.LENGTH_LONG).show();
+			Toast.makeText(MainActivity.this, "onError:"+dialogError.getMessage(), Toast.LENGTH_LONG).show();
 	    }//met
 	    @Override
 	    public void onCancel() {
