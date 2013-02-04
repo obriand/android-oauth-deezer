@@ -1,11 +1,16 @@
 package com.obriand.android_oauth_deezer;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import com.deezer.sdk.DeezerConnect;
 import com.deezer.sdk.DeezerConnectImpl;
 import com.deezer.sdk.DeezerError;
+import com.deezer.sdk.DeezerRequest;
 import com.deezer.sdk.DialogError;
 import com.deezer.sdk.DialogListener;
 import com.deezer.sdk.OAuthException;
+import com.deezer.sdk.RequestListener;
 import com.deezer.sdk.SessionStore;
 
 import android.os.Bundle;
@@ -25,6 +30,8 @@ public class MainActivity extends Activity {
     private final static String[] PERMISSIONS = new String[] {};
     /** DeezerConnect object used for auhtentification or request. */
     private DeezerConnect deezerConnect = new DeezerConnectImpl( APP_ID );
+    /** DeezerRequestListener object used to handle requests. */
+    RequestListener handler = new MyDeezerRequestHandler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +47,42 @@ public class MainActivity extends Activity {
 		
 	}
 	
+	// Login button
 	public void btLogin(View view) {
 		Log.i(TAG, "login");
 		// Call the authorize method of deezerConnect SDK object to launch login process :
 		// Use LoginDialogHandler inner class to handle callbacks methods (success, error, cancel...)
 		deezerConnect.authorize( MainActivity.this, PERMISSIONS, new LoginDialogHandler() );
+	}
+	
+	// Sync request button (forbidden in main thread)
+	public void btSynchronousRequest(View view) {
+	    String userId = "2529";
+	    DeezerRequest request = new DeezerRequest( "/user/"+userId+"/playlists" );
+	    String result = null;
+	    try {
+	    	result = deezerConnect.requestSync( request );
+	    	Toast.makeText(MainActivity.this, "Synchro request:"+result, Toast.LENGTH_LONG).show();
+	    } catch( MalformedURLException ex ) {
+	    //todo some code. warning code is executed in same thread as request.
+	    } catch( IOException ex ) {
+	    //todo some code. warning code is executed in same thread as request.
+	    } catch (OAuthException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DeezerError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// ASync request button
+	// Responses in MyDeezerRequestHandler inner class
+	public void btASynchronousRequest(View view) {
+		//sending requests
+		String userId = "2529";
+		DeezerRequest request = new DeezerRequest( "/user/"+userId+"/playlists" );
+		deezerConnect.requestAsync( request, handler);
 	}
 
 	@Override
@@ -55,6 +93,7 @@ public class MainActivity extends Activity {
 	}
 	
     /** Handle DeezerConnect callbacks. */
+	// Callbacks for Login
     private class LoginDialogHandler implements DialogListener {
 	    @Override
 	    public void onComplete(final Bundle values) {
@@ -84,6 +123,41 @@ public class MainActivity extends Activity {
 			Log.i(TAG, "onOAuthException");
 			Toast.makeText(MainActivity.this, "onOAuthException", Toast.LENGTH_LONG).show();
 	    }//met
+    }//inner class
+    
+    
+    /** Handle DeezerConnect callbacks. */
+	// Callbacks for async request
+    class MyDeezerRequestHandler implements RequestListener {
+    	public void onComplete(String response, Object requestId) {
+    		//Toast.makeText( getApplicationContext(), "onComplete request:"+response, Toast.LENGTH_SHORT ).show();
+    		Log.i(TAG, "onComplete request:"+response);
+    		final String uiResponse = response;
+    		runOnUiThread(new Runnable(){
+    		    public void run() {
+    		    	Toast.makeText( getApplicationContext(), "onComplete request:"+uiResponse, Toast.LENGTH_SHORT ).show();
+    		    }
+    		});
+    		//Warning code is not executed in UI Thread
+	    	if( "list-playlists".equals(requestId) ) {
+		    	// TODO Implement some code to parse the answer as detailed in
+		    	//http://developers.deezer.com/api/user/playlists
+	    	}//if
+    	}
+    	public void onIOException(IOException e, Object requestId) {
+	    	// TODO. Implement some code to handle error. Warning code is not executed in UI Thread
+    	}
+    	public void onMalformedURLException(MalformedURLException e, Object requestId) {
+	    	// TODO Implement some code to handle error. Warning code is not executed in UI Thread
+    	}
+		@Override
+		public void onDeezerError(DeezerError arg0, Object arg1) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void onOAuthException(OAuthException arg0, Object arg1) {
+			// TODO Auto-generated method stub
+		}
     }//inner class
 
 }

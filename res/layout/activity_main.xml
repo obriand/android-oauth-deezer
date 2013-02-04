@@ -20,5 +20,23 @@
         android:layout_centerHorizontal="true"
         android:onClick="btLogin"
         android:text="@string/mainactivity_login_bt" />
+    
+    <Button
+        android:id="@+id/mainactivity_syncrequest_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainactivity_login_bt"
+        android:layout_centerHorizontal="true"
+        android:onClick="btSynchronousRequest"
+        android:text="@string/mainactivity_syncrequest_bt" />
+    
+    <Button
+        android:id="@+id/mainactivity_asyncrequest_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainactivity_syncrequest_bt"
+        android:layout_centerHorizontal="true"
+        android:onClick="btASynchronousRequest"
+        android:text="@string/mainactivity_asyncrequest_bt" />
 
 </RelativeLayout>
