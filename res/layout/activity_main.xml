@@ -5,8 +5,8 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/mainactivity_hello_tv"
-        android:layout_width="wrap_content"
+        android:id="@+id/mainactivity_hello_tv" 
+        android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -38,5 +38,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="btASynchronousRequest"
         android:text="@string/mainactivity_asyncrequest_bt" />
+    
+    <Button
+        android:id="@+id/mainactivity_deezerasynctask_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainactivity_asyncrequest_bt"
+        android:layout_centerHorizontal="true"
+        android:onClick="btDeezerASyncTaskRequest"
+        android:text="@string/mainactivity_deezerasynctask_bt" />
 
 </RelativeLayout>

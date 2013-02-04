@@ -2,7 +2,13 @@ package com.obriand.android_oauth_deezer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import com.deezer.sdk.AsyncDeezerTask;
 import com.deezer.sdk.DeezerConnect;
 import com.deezer.sdk.DeezerConnectImpl;
 import com.deezer.sdk.DeezerError;
@@ -28,10 +34,13 @@ public class MainActivity extends Activity {
     public final static String APP_ID = "100113"; // ID of the o.briand@gmail.com account for application "test_orange"
     /** Permissions requested on Deezer accounts. */
     private final static String[] PERMISSIONS = new String[] {};
+    
     /** DeezerConnect object used for auhtentification or request. */
     private DeezerConnect deezerConnect = new DeezerConnectImpl( APP_ID );
     /** DeezerRequestListener object used to handle requests. */
     RequestListener handler = new MyDeezerRequestHandler();
+    /** DeezerTaskRequestListener object used to handle requests. */
+    RequestListener deezerTaskHandler = new MyDeezerTaskHandler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +93,26 @@ public class MainActivity extends Activity {
 		DeezerRequest request = new DeezerRequest( "/user/"+userId+"/playlists" );
 		deezerConnect.requestAsync( request, handler);
 	}
+	
+	// AsyncDeezerTask request button
+	// Responses in MyDeezerTaskHandler inner class
+	public void btDeezerASyncTaskRequest(View view) { 
+		//sending requests
+		String userId = "2529";
+		DeezerRequest request = new DeezerRequest( "/user/"+userId+"/playlists" );
+		AsyncDeezerTask asyncDeezerTask = new AsyncDeezerTask( deezerConnect, deezerTaskHandler );
+		//optinionally, use an executor
+		BlockingQueue<Runnable> worksQueue = new ArrayBlockingQueue<Runnable>(2);
+		Executor executor = new ThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, worksQueue);
+		//execute the AsyncTask with the executor
+		asyncDeezerTask.executeOnExecutor(executor, request);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		return true; 
 	}
 	
     /** Handle DeezerConnect callbacks. */
@@ -131,11 +154,11 @@ public class MainActivity extends Activity {
     class MyDeezerRequestHandler implements RequestListener {
     	public void onComplete(String response, Object requestId) {
     		//Toast.makeText( getApplicationContext(), "onComplete request:"+response, Toast.LENGTH_SHORT ).show();
-    		Log.i(TAG, "onComplete request:"+response);
+    		Log.i(TAG, "onComplete async request:"+response);
     		final String uiResponse = response;
     		runOnUiThread(new Runnable(){
     		    public void run() {
-    		    	Toast.makeText( getApplicationContext(), "onComplete request:"+uiResponse, Toast.LENGTH_SHORT ).show();
+    		    	Toast.makeText( getApplicationContext(), "onComplete async request:"+uiResponse, Toast.LENGTH_SHORT ).show();
     		    }
     		});
     		//Warning code is not executed in UI Thread
@@ -159,5 +182,30 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 		}
     }//inner class
+    
+    class MyDeezerTaskHandler implements RequestListener {
+    	public void onComplete(String response, Object requestId) {
+    	//code is executed in UI Thread
+    	Toast.makeText( getApplicationContext(), "onComplete deezer task:"+response, Toast.LENGTH_SHORT ).show();
+    	if( "list-playlists".equals(requestId)) {
+	    	//TODO. Implement some code to parse the answer as detailled in
+	    	//http://developers.deezer.com/api/user/playlists
+    	}//if
+    	}
+    	public void onIOException(IOException e, Object requestId) {
+    		//TODO. Implement some code to handle error. Code is executed in UI Thread
+    	}
+    	public void onMalformedURLException(MalformedURLException e, Object requestId) {
+    		//TODO. Implement some code to handle error. Code is executed in UI Thread
+    	}
+		@Override
+		public void onDeezerError(DeezerError arg0, Object arg1) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void onOAuthException(OAuthException arg0, Object arg1) {
+			// TODO Auto-generated method stub
+		}
+    }//inner class 
 
 }

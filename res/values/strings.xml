@@ -7,5 +7,6 @@
     <string name="mainactivity_login_bt">Login to Deezer</string>
     <string name="mainactivity_syncrequest_bt">Synchronous request</string>
     <string name="mainactivity_asyncrequest_bt">Asynchronous request</string>
+    <string name="mainactivity_deezerasynctask_bt">Deezer AsyncTask request</string>
 
 </resources>
