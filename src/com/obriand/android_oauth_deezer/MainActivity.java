@@ -30,11 +30,18 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Log.i(TAG, "restore");
+		// Verify is already logged in using 'restore' method of the session store (if already logged in, the token is stored in the session store
+		SessionStore sessionStore = new SessionStore();
+		if( sessionStore.restore( deezerConnect, this ) ) {
+			Toast.makeText( this, "Already logged in !", Toast.LENGTH_SHORT ).show();
+		}
+		
 	}
 	
 	public void btLogin(View view) {
 		Log.i(TAG, "login");
-		Toast.makeText(this, "try to login", Toast.LENGTH_LONG).show();
 		// Call the authorize method of deezerConnect SDK object to launch login process :
 		// Use LoginDialogHandler inner class to handle callbacks methods (success, error, cancel...)
 		deezerConnect.authorize( MainActivity.this, PERMISSIONS, new LoginDialogHandler() );
